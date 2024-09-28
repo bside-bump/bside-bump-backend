@@ -1,48 +1,56 @@
-version: '3'
+version: '3.9'
 services:
   postgres-dev:
+    env_file:
+      - .env.dev
     image: postgres:latest
     environment:
-      POSTGRES_USER: ${POSTGRES_DEV_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_DEV_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DEV_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - ./postgres-data/dev:/var/lib/postgresql/data
     ports:
-      - "5433:5432"
+      - '5433:5432'
 
   postgres-prod:
+    env_file:
+      - .env.prod
     image: postgres:latest
     environment:
-      POSTGRES_USER: ${POSTGRES_PROD_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PROD_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_PROD_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - ./postgres-data/prod:/var/lib/postgresql/data
     ports:
-      - "5434:5432"
+      - '5434:5432'
 
   server-dev:
+    env_file:
+      - .env.dev
     build:
       context: .
     environment:
       NODE_ENV: development
-      DATABASE_URL: postgres://${POSTGRES_DEV_USER}:${POSTGRES_DEV_PASSWORD}@postgres-dev:5432/${POSTGRES_DEV_DB}
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres-dev:5432/${POSTGRES_DB}
     depends_on:
       - postgres-dev
     ports:
-      - "3001:3000"
+      - '3001:3000'
 
   server-prod:
+    env_file:
+      - .env.prod
     build:
       context: .
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgres://${POSTGRES_PROD_USER}:${POSTGRES_PROD_PASSWORD}@postgres-prod:5432/${POSTGRES_PROD_DB}
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres-prod:5432/${POSTGRES_DB}
     depends_on:
       - postgres-prod
     ports:
-      - "3000:3000"
+      - '3000:3000'
 
 volumes:
   pgdata_dev:
