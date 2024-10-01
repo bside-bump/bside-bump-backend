@@ -13,7 +13,10 @@ describe('CategoryService', () => {
       {
         id: 1,
         name: '음식',
-        products: [{ name: '아이스크림', price: 1000, iconUrl: 'icon-url-1' }],
+        products: [
+          { name: '아이스크림', price: 1000, iconUrl: 'icon-url-1' },
+          { name: '탕후루', price: 3000, iconUrl: 'icon-url-2' },
+        ],
       },
     ]),
   };
@@ -39,14 +42,27 @@ describe('CategoryService', () => {
     expect(service).toBeDefined();
   });
 
-  it('should return categories with their products', async () => {
-    const categories = await service.findAllWithProducts();
-
-    expect(categories).toEqual([
+  it('should return products with price less than the given price when type is MORE', async () => {
+    const result = await service.findAllWithProductsByPrice('MORE', 5000);
+    expect(result).toEqual([
       {
         id: 1,
         name: '음식',
-        products: [{ name: '아이스크림', price: 1000, iconUrl: 'icon-url-1' }],
+        products: [
+          { name: '아이스크림', price: 1000, iconUrl: 'icon-url-1' },
+          { name: '탕후루', price: 3000, iconUrl: 'icon-url-2' },
+        ],
+      },
+    ]);
+  });
+
+  it('should return products with price greater than the given price when type is EXPENSIVE', async () => {
+    const result = await service.findAllWithProductsByPrice('EXPENSIVE', 1000);
+    expect(result).toEqual([
+      {
+        id: 1,
+        name: '음식',
+        products: [{ name: '탕후루', price: 3000, iconUrl: 'icon-url-2' }],
       },
     ]);
   });
