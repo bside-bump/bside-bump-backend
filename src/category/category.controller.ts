@@ -9,7 +9,7 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Get()
-  @ApiOperation({ summary: '타입과 가격에ㅐ 따른 카테고리와 제품 조회' })
+  @ApiOperation({ summary: '타입과 가격에 따른 카테고리와 제품 조회' })
   @ApiQuery({
     name: 'type',
     description:
