@@ -14,6 +14,15 @@ export class CategoryService {
   async findAllWithProductsByPrice(type: string, price: number) {
     const categories = await this.categoryRepository.find({
       relations: ['products'],
+      select: {
+        id: true,
+        name: true,
+        products: {
+          name: true,
+          price: true,
+          iconUrl: true,
+        },
+      },
     });
 
     // type 에 따라 필터링 로직 적용
