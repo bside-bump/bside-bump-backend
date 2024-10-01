@@ -7,11 +7,14 @@ describe('CategoryController', () => {
   let service: CategoryService;
 
   const mockCategoryService = {
-    findAllWithProducts: jest.fn().mockResolvedValue([
+    findAllWithProductsByPrice: jest.fn().mockResolvedValue([
       {
         id: 1,
         name: '음식',
-        products: [{ name: '아이스크림', price: 1000, iconUrl: 'icon-url-1' }],
+        products: [
+          { name: '아이스크림', price: 1000, iconUrl: 'icon-url-1' },
+          { name: '탕후루', price: 3000, iconUrl: 'icon-url-2' },
+        ],
       },
     ]),
   };
@@ -35,17 +38,42 @@ describe('CategoryController', () => {
     expect(controller).toBeDefined();
   });
 
-  it('should return all categories with their products', async () => {
-    const categories = await controller.getCategoriesWithProducts();
-
-    expect(categories).toEqual([
+  it('should return filtered products when type is MORE and price is provided', async () => {
+    const result = await controller.getCategoriesWithProducts('MORE', 5000);
+    expect(result).toEqual([
       {
         id: 1,
         name: '음식',
-        products: [{ name: '아이스크림', price: 1000, iconUrl: 'icon-url-1' }],
+        products: [
+          { name: '아이스크림', price: 1000, iconUrl: 'icon-url-1' },
+          { name: '탕후루', price: 3000, iconUrl: 'icon-url-2' },
+        ],
       },
     ]);
+    expect(service.findAllWithProductsByPrice).toHaveBeenCalledWith(
+      'MORE',
+      5000,
+    );
+  });
 
-    expect(service.findAllWithProducts).toHaveBeenCalledTimes(1);
+  it('should return filtered products when type is EXPENSIVE and price is provided', async () => {
+    const result = await controller.getCategoriesWithProducts(
+      'EXPENSIVE',
+      1000,
+    );
+    expect(result).toEqual([
+      {
+        id: 1,
+        name: '음식',
+        products: [
+          { name: '아이스크림', price: 1000, iconUrl: 'icon-url-1' },
+          { name: '탕후루', price: 3000, iconUrl: 'icon-url-2' },
+        ],
+      },
+    ]);
+    expect(service.findAllWithProductsByPrice).toHaveBeenCalledWith(
+      'EXPENSIVE',
+      1000,
+    );
   });
 });
