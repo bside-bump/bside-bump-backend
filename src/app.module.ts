@@ -10,6 +10,7 @@ import { extname } from 'path';
 import { Category } from './entities/category.entity';
 import { Product } from './entities/product.entity';
 import { Result } from './entities/result.entity';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -36,7 +37,11 @@ import { Result } from './entities/result.entity';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath:
-        process.env.NODE_ENV === 'development' ? '.env.dev' : '.env.prod',
+        process.env.NODE_ENV === 'local'
+          ? '.env.local'
+          : process.env.NODE_ENV === 'development'
+            ? '.env.dev'
+            : '.env.prod',
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -52,6 +57,7 @@ import { Result } from './entities/result.entity';
         synchronize: true,
       }),
     }),
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
