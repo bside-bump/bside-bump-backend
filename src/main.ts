@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { readFileSync } from 'fs';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const httpsOptions = {
@@ -21,7 +22,15 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document); // Swagger UI 경로 설정
 
+  app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
+
   const configService = app.get(ConfigService);
   await app.listen(configService.get<number>('PORT'));
+
+  // 개발 환경인 경우 HTTP 서버 추가 실행
+  if (process.env.NODE_ENV === 'development') {
+    const httpApp = await NestFactory.create(AppModule);
+    await httpApp.listen(configService.get<number>('HTTP_PORT'));
+  }
 }
 bootstrap();

@@ -11,6 +11,7 @@ import { Category } from './entities/category.entity';
 import { Product } from './entities/product.entity';
 import { Result } from './entities/result.entity';
 import { CategoryModule } from './category/category.module';
+import { ResultModule } from './result/result.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { CategoryModule } from './category/category.module';
       }),
     }),
     CategoryModule,
+    ResultModule,
   ],
   controllers: [AppController],
   providers: [AppService],
