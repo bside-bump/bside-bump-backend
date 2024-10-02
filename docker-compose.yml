@@ -40,7 +40,8 @@ services:
     depends_on:
       - postgres-dev
     ports:
-      - '3001:3001'
+      - '3001:3001' # HTTPS 포트
+      - '3003:3003' # HTTP 포트 추가
 
   server-prod:
     env_file:
