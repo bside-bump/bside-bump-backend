@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { readFileSync } from 'fs';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const httpsOptions = {
@@ -20,6 +21,8 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document); // Swagger UI 경로 설정
+
+  app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
 
   const configService = app.get(ConfigService);
   await app.listen(configService.get<number>('PORT'));

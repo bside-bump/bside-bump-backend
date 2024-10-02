@@ -14,7 +14,7 @@ export class Result {
 
   @Column({
     enum: Object.values(RecommendationTypeEnum),
-    default: RecommendationTypeEnum.MORE_ITEMS, // 기본값은 '차라리'
+    default: RecommendationTypeEnum.MORE, // 기본값은 '차라리'
   })
   recommendationType: RecommendationTypeEnum; // 차라리 혹은 아껴서
 
@@ -28,6 +28,8 @@ export class Result {
 interface SuggestedItem {
   name: string;
   price: number;
-  quantity: number;
   iconUrl: string;
+  quantity: number;
+  percentage: number;
+  change: number;
 }
