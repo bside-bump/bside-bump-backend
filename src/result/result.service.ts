@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Result } from 'src/entities/result.entity';
 import { Repository } from 'typeorm';
@@ -10,6 +10,17 @@ export class ResultService {
     @InjectRepository(Result)
     private readonly resultRepository: Repository<Result>,
   ) {}
+
+  // 주어진 ID로 결과 조회
+  async findById(id: string): Promise<Result> {
+    const result = await this.resultRepository.findOne({ where: { id } });
+
+    if (!result) {
+      throw new NotFoundException(`ID가 ${id}인 결과를 찾을 수 없습니다.`);
+    }
+
+    return result;
+  }
 
   async saveResult(resultDto: ResultDto) {
     const { name, price, type, recommendedItems } = resultDto;
