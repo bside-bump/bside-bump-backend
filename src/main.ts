@@ -26,5 +26,11 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
   await app.listen(configService.get<number>('PORT'));
+
+  // 개발 환경인 경우 HTTP 서버 추가 실행
+  if (process.env.NODE_ENV === 'development') {
+    const httpApp = await NestFactory.create(AppModule);
+    await httpApp.listen(configService.get<number>('HTTP_PORT'));
+  }
 }
 bootstrap();
