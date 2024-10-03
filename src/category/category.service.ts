@@ -18,6 +18,7 @@ export class CategoryService {
         id: true,
         name: true,
         products: {
+          id: true,
           name: true,
           price: true,
           iconUrl: true,
