@@ -1,6 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class ProductDto {
+  @ApiProperty({ description: '제품 ID' })
+  id: number;
+
   @ApiProperty({ description: '제품 이름' })
   name: string;
 
