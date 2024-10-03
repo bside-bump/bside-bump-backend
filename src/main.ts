@@ -40,6 +40,9 @@ async function bootstrap() {
       origin: 'http://localhost:3000',
       credentials: true,
     });
+    httpApp.useGlobalPipes(
+      new ValidationPipe({ transform: true, whitelist: true }),
+    );
     await httpApp.listen(configService.get<number>('HTTP_PORT'));
   }
 }
