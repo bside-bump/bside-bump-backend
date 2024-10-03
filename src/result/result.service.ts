@@ -34,7 +34,7 @@ export class ResultService {
     const resultData = {
       name,
       price,
-      type,
+      recommendationType: type,
       suggestedItems: [],
     };
 
