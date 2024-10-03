@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { readFileSync } from 'fs';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { LoggingInterceptor } from './interceptors/logger.interceptor';
 
 async function bootstrap() {
   const httpsOptions = {
@@ -43,6 +44,9 @@ async function bootstrap() {
     httpApp.useGlobalPipes(
       new ValidationPipe({ transform: true, whitelist: true }),
     );
+    // 글로벌 인터셉터 적용 (로깅)
+    httpApp.useGlobalInterceptors(new LoggingInterceptor());
+
     await httpApp.listen(configService.get<number>('HTTP_PORT'));
   }
 }
