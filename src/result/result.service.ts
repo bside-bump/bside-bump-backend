@@ -25,6 +25,11 @@ export class ResultService {
   async saveResult(resultDto: ResultDto) {
     const { name, price, type, recommendedItems } = resultDto;
 
+    console.log('name : ', name);
+    console.log('price : ', price);
+    console.log('type : ', type);
+    console.log('recommendedItems : ', JSON.stringify(recommendedItems));
+
     // 결과 데이터 저장할 객체 생성
     const resultData = {
       name,

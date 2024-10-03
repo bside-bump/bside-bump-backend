@@ -30,6 +30,7 @@ export class ResultController {
   })
   async saveResult(@Body() resultDto: ResultDto) {
     // service를 통해서 결과 저장
+    console.log('받는 데이터 확인 : ', JSON.stringify(resultDto));
     const savedResult = await this.resultService.saveResult(resultDto);
     return savedResult;
   }
