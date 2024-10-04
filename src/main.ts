@@ -23,22 +23,25 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document); // Swagger UI 경로 설정
 
-  // CORS 설정 추가
-  app.enableCors({
-    origin: 'http://localhost:3000', // 허용할 도메인 등록
-    credentials: true, // 쿠키 등을 포함한 요청을 허용하려면 설정
-  });
-
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
 
   const configService = app.get(ConfigService);
+
+  // CORS 설정 추가
+  app.enableCors({
+    origin: ['http://localhost:3000', configService.get<string>('HTTP_ORIGIN')],
+    credentials: true, // 쿠키 등을 포함한 요청을 허용하려면 설정
+  });
   await app.listen(configService.get<number>('PORT'));
 
   // 개발 환경인 경우 HTTP 서버 추가 실행
   if (process.env.NODE_ENV === 'development') {
     const httpApp = await NestFactory.create(AppModule);
     httpApp.enableCors({
-      origin: 'http://localhost:3000',
+      origin: [
+        'http://localhost:3000',
+        configService.get<string>('HTTP_ORIGIN'),
+      ],
       credentials: true,
     });
     httpApp.useGlobalPipes(
