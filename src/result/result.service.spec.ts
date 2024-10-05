@@ -34,6 +34,10 @@ describe('ResultService', () => {
     );
   });
 
+  afterEach(() => {
+    jest.clearAllMocks(); // 모든 모킹된 함수 초기화
+  });
+
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
@@ -117,6 +121,26 @@ describe('ResultService', () => {
     await expect(service.saveResult(resultDto)).rejects.toThrow(
       BadRequestException,
     );
+  });
+
+  // MORE 타입에서 추천 품목 가격이 1원부터 999,999,999원 사이일 때 정상 동작 테스트
+  it('should allow recommended item price from 1 to 999,999,999 for MORE', async () => {
+    const resultDto: ResultDto = {
+      name: '테스트',
+      price: 50000,
+      type: RecommendationTypeEnum.MORE,
+      recommendedItems: [
+        { name: '추천1', price: 1, iconUrl: 'icon-url' },
+        { name: '추천2', price: 49999, iconUrl: 'icon-url' },
+      ],
+    };
+
+    mockResultRepository.save.mockResolvedValue(resultDto);
+
+    const result = await service.saveResult(resultDto);
+
+    expect(result).toEqual(resultDto);
+    expect(mockResultRepository.save).toHaveBeenCalledTimes(1);
   });
 
   // 조건을 모두 만족하는 경우 정상 저장 테스트
