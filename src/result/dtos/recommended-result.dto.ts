@@ -12,5 +12,5 @@ export class RecommendedItemDto {
 
   @ApiProperty({ description: '추천 품목 아이콘 URL' })
   @IsString()
-  iconUrl: string = 'base_icon_url';
+  iconUrl: string = 'default_image.png';
 }
