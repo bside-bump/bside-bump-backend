@@ -14,9 +14,9 @@ export function validateOverallPrice(price: number) {
 // 가격 범위 검증
 export function validateItemPrice(type: RecommendationTypeEnum, price: number) {
   if (type === 'MORE') {
-    if (price < 1000 || price > 99999999) {
+    if (price < 1 || price > 99999999) {
       throw new BadRequestException(
-        'MORE 타입의 품목 가격은 1,000원 이상, 99,999,999원 이하여야 합니다.',
+        'MORE 타입의 품목 가격은 1원 이상, 99,999,999원 이하여야 합니다.',
       );
     }
   } else if (type === 'EXPENSIVE') {
@@ -53,13 +53,13 @@ export function validateRecommendedItemsPrice(
   items: RecommendedItemDto[],
 ) {
   for (const item of items) {
-    if (type === 'MORE' && item.price > price) {
+    if (type === 'MORE' && item.price >= price) {
       throw new BadRequestException(
         'MORE 타입에서는 추천 품목의 가격이 원래 품목의 가격보다 낮아야 합니다.',
       );
     }
 
-    if (type === 'EXPENSIVE' && item.price < price) {
+    if (type === 'EXPENSIVE' && item.price <= price) {
       throw new BadRequestException(
         'EXPENSIVE 타입에서는 추천 품목의 가격이 원래 품목의 가격보다 높아야 합니다.',
       );
