@@ -2,7 +2,7 @@ import { Controller, Get, Query } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CategoryDto } from './dtos/category.dto';
-import { PriceValidationPipe } from 'src/common/pipes/price-validation.pipe';
+import { PriceValidationPipe } from '../common/pipes/price-validation.pipe';
 
 @ApiTags('Category')
 @Controller('category')

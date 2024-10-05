@@ -66,4 +66,27 @@ describe('CategoryService', () => {
       },
     ]);
   });
+
+  // 추가 테스트: price 필터링 후 빈 배열을 반환하는지 테스트
+  it('should return empty array if no products match the given price for MORE', async () => {
+    const result = await service.findAllWithProductsByPrice('MORE', 500);
+    expect(result).toEqual([
+      {
+        id: 1,
+        name: '음식',
+        products: [],
+      },
+    ]);
+  });
+
+  it('should return empty array if no products match the given price for EXPENSIVE', async () => {
+    const result = await service.findAllWithProductsByPrice('EXPENSIVE', 10000);
+    expect(result).toEqual([
+      {
+        id: 1,
+        name: '음식',
+        products: [],
+      },
+    ]);
+  });
 });
