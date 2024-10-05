@@ -123,6 +123,11 @@ export class ResultService {
       }
     }
 
-    return savedResult;
+    // 3초 지연 후 결과 반환(프론트엔드 요청-로딩 화면 표시를 위함)
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(savedResult);
+      }, 3000); // 3초 지연
+    });
   }
 }
