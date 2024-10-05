@@ -16,8 +16,8 @@ import { RecommendationTypeEnum } from '../../common/consts/types.const';
 export class ResultDto {
   @ApiProperty({ description: '사용자가 선택한 품목 이름' })
   @IsString()
-  @Length(1, 10, {
-    message: '품목 이름은 1글자 이상 10글자 이하로 입력해주세요.',
+  @Length(1, 20, {
+    message: '품목 이름은 1글자 이상 20글자 이하로 입력해주세요.',
   })
   name: string;
 
