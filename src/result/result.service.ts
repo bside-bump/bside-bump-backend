@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Result } from '../common/entities/result.entity';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import { ResultDto } from './dtos/result.dto';
 import {
   validateOverallPrice,
@@ -9,12 +9,15 @@ import {
   validateRecommendedItemsLength,
   validateRecommendedItemsPrice,
 } from '../common/utils/validation.utils';
+import { sendingMsgToDiscord } from 'src/common/utils/discord-sending.utils';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ResultService {
   constructor(
     @InjectRepository(Result)
     private readonly resultRepository: Repository<Result>,
+    private readonly configSerivce: ConfigService,
   ) {}
 
   // 주어진 ID로 결과 조회
@@ -83,6 +86,43 @@ export class ResultService {
     }
 
     const savedResult = await this.resultRepository.save(resultData);
+    if (process.env.NODE_ENV === 'production') {
+      try {
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+
+        const endOfToday = new Date();
+        endOfToday.setHours(23, 59, 59, 999);
+
+        // 총 결과 갯수와 오늘 등록된 결과 개수 가져오기
+        const totalResults = await this.resultRepository.count();
+        const todayResults = await this.resultRepository.count({
+          where: {
+            createdAt: Between(startOfToday, endOfToday),
+          },
+        });
+        // Discord로 전송할 메시지 생성
+        const message = `
+    **새로운 결과가 저장되었습니다!** 🎉
+    - 이름: ${savedResult.name}
+    - 가격: ${savedResult.price.toLocaleString()}원
+    - 타입: ${savedResult.recommendationType}
+    - 추천 품목: ${savedResult.suggestedItems.map(
+      (item) => `\n  - ${item.name} (가격: ${item.price.toLocaleString()}원)`,
+    )}
+
+    📊 현재까지 총 ${totalResults}개의 결과가 등록되었습니다.
+    🗓️ 오늘은 총 ${todayResults}개의 결과가 등록되었습니다.
+    `;
+
+        // Discord 메시지 전송
+        const hookUrl = this.configSerivce.get<string>('DISCORD_WEBHOOK_URL');
+        await sendingMsgToDiscord(hookUrl, message);
+      } catch (error) {
+        console.log('discord 전송 실패 : ', error);
+      }
+    }
+
     return savedResult;
   }
 }
