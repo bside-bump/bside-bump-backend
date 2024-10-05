@@ -1,4 +1,4 @@
-import { RecommendationTypeEnum } from 'src/consts/types.const';
+import { RecommendationTypeEnum } from 'src/common/consts/types.const';
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()

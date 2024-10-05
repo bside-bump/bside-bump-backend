@@ -8,7 +8,7 @@ import {
   IsArray,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { RecommendationTypeEnum } from 'src/consts/types.const';
+import { RecommendationTypeEnum } from 'src/common/consts/types.const';
 
 export class ResultDto {
   @ApiProperty({ description: '사용자가 선택한 품목 이름' })

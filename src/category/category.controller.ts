@@ -1,7 +1,8 @@
-import { Controller, Get, ParseIntPipe, Query } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CategoryDto } from './dtos/category.dto';
+import { PriceValidationPipe } from 'src/common/pipes/price-validation.pipe';
 
 @ApiTags('Category')
 @Controller('category')
@@ -25,7 +26,7 @@ export class CategoryController {
   @ApiResponse({ status: 200, description: '성공', type: [CategoryDto] })
   async getCategoriesWithProducts(
     @Query('type') type: string,
-    @Query('price', ParseIntPipe) price: number,
+    @Query('price', PriceValidationPipe) price: number,
   ): Promise<CategoryDto[]> {
     return await this.categoryService.findAllWithProductsByPrice(type, price);
   }
