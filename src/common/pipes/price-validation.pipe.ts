@@ -15,8 +15,8 @@ export class PriceValidationPipe implements PipeTransform {
       throw new BadRequestException('Price must be a number');
     }
 
-    if (price < 1000 || price > 10000000) {
-      throw new BadRequestException('Price must be between 1000 and 10000000');
+    if (price < 1000 || price >= 100000000) {
+      throw new BadRequestException('Price must be between 1000 and 99999999');
     }
 
     return price;

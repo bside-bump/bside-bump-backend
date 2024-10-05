@@ -14,13 +14,13 @@ describe('PriceValidationPipe', () => {
 
   it('should throw error if price is less than 1000', () => {
     expect(() => pipe.transform('999', { type: 'query' })).toThrow(
-      new BadRequestException('Price must be between 1000 and 10000000'),
+      new BadRequestException('Price must be between 1000 and 99999999'),
     );
   });
 
-  it('should throw error if price is more than 10,000,000', () => {
-    expect(() => pipe.transform('10000001', { type: 'query' })).toThrow(
-      new BadRequestException('Price must be between 1000 and 10000000'),
+  it('should throw error if price is more than 100,000,000', () => {
+    expect(() => pipe.transform('100000000', { type: 'query' })).toThrow(
+      new BadRequestException('Price must be between 1000 and 99999999'),
     );
   });
 
