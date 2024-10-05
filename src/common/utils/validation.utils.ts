@@ -2,12 +2,29 @@ import { BadRequestException } from '@nestjs/common';
 import { RecommendationTypeEnum } from '../../common/consts/types.const';
 import { RecommendedItemDto } from '../../result/dtos/recommended-result.dto';
 
-// 가격 범위 검증
-export function validatePriceRange(price: number) {
-  if (price < 1000 || price > 10000000) {
+// 전체 가격 범위 검증
+export function validateOverallPrice(price: number) {
+  if (price < 1000 || price > 99999999) {
     throw new BadRequestException(
-      '추천 품목의 가격은 1,000원 이상, 10,000,000원 이하여야 합니다.',
+      '전체 가격은 1,000원 이상, 99,999,999원 이하여야 합니다.',
     );
+  }
+}
+
+// 가격 범위 검증
+export function validateItemPrice(type: RecommendationTypeEnum, price: number) {
+  if (type === 'MORE') {
+    if (price < 1000 || price > 99999999) {
+      throw new BadRequestException(
+        'MORE 타입의 품목 가격은 1,000원 이상, 99,999,999원 이하여야 합니다.',
+      );
+    }
+  } else if (type === 'EXPENSIVE') {
+    if (price < 1000 || price > 999999999) {
+      throw new BadRequestException(
+        'EXPENSIVE 타입의 품목 가격은 1,000원 이상, 999,999,999원 이하여야 합니다.',
+      );
+    }
   }
 }
 
@@ -36,13 +53,13 @@ export function validateRecommendedItemsPrice(
   items: RecommendedItemDto[],
 ) {
   for (const item of items) {
-    if (type === 'MORE' && item.price >= price) {
+    if (type === 'MORE' && item.price > price) {
       throw new BadRequestException(
         'MORE 타입에서는 추천 품목의 가격이 원래 품목의 가격보다 낮아야 합니다.',
       );
     }
 
-    if (type === 'EXPENSIVE' && item.price <= price) {
+    if (type === 'EXPENSIVE' && item.price < price) {
       throw new BadRequestException(
         'EXPENSIVE 타입에서는 추천 품목의 가격이 원래 품목의 가격보다 높아야 합니다.',
       );
