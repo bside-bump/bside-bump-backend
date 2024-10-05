@@ -4,9 +4,9 @@ import { RecommendedItemDto } from '../../result/dtos/recommended-result.dto';
 
 // 전체 가격 범위 검증
 export function validateOverallPrice(price: number) {
-  if (price < 1000 || price > 99999999) {
+  if (price < 1000 || price > 9999999) {
     throw new BadRequestException(
-      '전체 가격은 1,000원 이상, 99,999,999원 이하여야 합니다.',
+      '전체 가격은 1,000원 이상, 9,999,999원 이하여야 합니다.',
     );
   }
 }
@@ -16,7 +16,7 @@ export function validateItemPrice(type: RecommendationTypeEnum, price: number) {
   if (type === 'MORE') {
     if (price < 1 || price > 99999999) {
       throw new BadRequestException(
-        'MORE 타입의 품목 가격은 1원 이상, 99,999,999원 이하여야 합니다.',
+        'MORE 타입의 품목 가격은 1원 이상, 9,999,999원 이하여야 합니다.',
       );
     }
   } else if (type === 'EXPENSIVE') {
