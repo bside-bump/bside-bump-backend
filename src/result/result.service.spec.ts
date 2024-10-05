@@ -42,11 +42,11 @@ describe('ResultService', () => {
     expect(service).toBeDefined();
   });
 
-  // 전체 price 범위 테스트 (MORE 타입에서 99,999,999 초과 시 에러)
-  it('should throw an error if overall price is out of range for MORE', async () => {
+  // 전체 price 범위 테스트 (1,000원 이상 ~ 10,000,000원 미만 범위 초과 시 에러)
+  it('should throw an error if overall price is out of range', async () => {
     const resultDto: ResultDto = {
       name: '테스트',
-      price: 100000000, // 99,999,999 초과
+      price: 10000000, // 10,000,000 초과
       type: RecommendationTypeEnum.MORE,
       recommendedItems: [{ name: '추천1', price: 1000, iconUrl: 'icon-url' }],
     };
@@ -56,15 +56,12 @@ describe('ResultService', () => {
     );
   });
 
-  // 전체 price 범위 테스트 (EXPENSIVE 타입에서 99,999,999 초과 시 에러)
-  it('should throw an error if overall price is out of range for EXPENSIVE', async () => {
+  it('should throw an error if overall price is less than 1,000', async () => {
     const resultDto: ResultDto = {
       name: '테스트',
-      price: 1000000000, // 999,999,999 초과
+      price: 999, // 1,000 미만
       type: RecommendationTypeEnum.EXPENSIVE,
-      recommendedItems: [
-        { name: '추천1', price: 1000000000, iconUrl: 'icon-url' },
-      ],
+      recommendedItems: [{ name: '추천1', price: 1000, iconUrl: 'icon-url' }],
     };
 
     await expect(service.saveResult(resultDto)).rejects.toThrow(
