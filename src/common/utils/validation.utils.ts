@@ -20,9 +20,9 @@ export function validateItemPrice(type: RecommendationTypeEnum, price: number) {
       );
     }
   } else if (type === 'EXPENSIVE') {
-    if (price < 1000 || price > 999999999) {
+    if (price < 1000 || price > 99999999999) {
       throw new BadRequestException(
-        'EXPENSIVE 타입의 품목 가격은 1,000원 이상, 999,999,999원 이하여야 합니다.',
+        'EXPENSIVE 타입의 품목 가격은 1,000원 이상, 99,999,999,999원 이하여야 합니다.',
       );
     }
   }
