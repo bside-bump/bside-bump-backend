@@ -4,12 +4,12 @@ import { AppService } from './app.service';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PUBLIC_FOLDER_PATH } from './consts/path.const';
+import { PUBLIC_FOLDER_PATH } from './common/consts/path.const';
 import { MulterModule } from '@nestjs/platform-express';
 import { extname } from 'path';
-import { Category } from './entities/category.entity';
-import { Product } from './entities/product.entity';
-import { Result } from './entities/result.entity';
+import { Category } from './common/entities/category.entity';
+import { Product } from './common/entities/product.entity';
+import { Result } from './common/entities/result.entity';
 import { CategoryModule } from './category/category.module';
 import { ResultModule } from './result/result.module';
 

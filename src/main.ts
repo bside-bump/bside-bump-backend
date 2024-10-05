@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { readFileSync } from 'fs';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
-import { LoggingInterceptor } from './interceptors/logger.interceptor';
+import { LoggingInterceptor } from './common/interceptors/logger.interceptor';
 
 async function bootstrap() {
   const httpsOptions = {

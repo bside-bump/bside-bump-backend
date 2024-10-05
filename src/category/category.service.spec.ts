@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CategoryService } from './category.service';
 import { Repository } from 'typeorm';
-import { Category } from '../entities/category.entity';
+import { Category } from '../common/entities/category.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 describe('CategoryService', () => {
@@ -63,6 +63,29 @@ describe('CategoryService', () => {
         id: 1,
         name: '음식',
         products: [{ name: '탕후루', price: 3000, iconUrl: 'icon-url-2' }],
+      },
+    ]);
+  });
+
+  // 추가 테스트: price 필터링 후 빈 배열을 반환하는지 테스트
+  it('should return empty array if no products match the given price for MORE', async () => {
+    const result = await service.findAllWithProductsByPrice('MORE', 500);
+    expect(result).toEqual([
+      {
+        id: 1,
+        name: '음식',
+        products: [],
+      },
+    ]);
+  });
+
+  it('should return empty array if no products match the given price for EXPENSIVE', async () => {
+    const result = await service.findAllWithProductsByPrice('EXPENSIVE', 10000);
+    expect(result).toEqual([
+      {
+        id: 1,
+        name: '음식',
+        products: [],
       },
     ]);
   });
