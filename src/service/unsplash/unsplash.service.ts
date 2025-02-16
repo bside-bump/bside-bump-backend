@@ -18,7 +18,7 @@ export class UnsplashService {
       query: keyword,
       page: page,
       perPage: 10,
-      orientation: 'portrait',
+      orientation: 'landscape',
     });
     console.log('unsplash 응답 데이터 길이', result.response.results.length);
     console.log('unsplash 응답 데이터 0번째', result.response.results[0]);
