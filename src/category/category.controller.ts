@@ -1,13 +1,17 @@
-import { Controller, Get, Query } from '@nestjs/common';
-import { CategoryService } from './category.service';
+import { Controller, Get, ParseIntPipe, Query } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CategoryDto } from './dtos/category.dto';
+import { UnsplashImageUrls, UnsplashService } from '@service/unsplash';
 import { PriceValidationPipe } from '../common/pipes/price-validation.pipe';
+import { CategoryService } from './category.service';
+import { CategoryDto } from './dtos/category.dto';
 
 @ApiTags('Category')
 @Controller('category')
 export class CategoryController {
-  constructor(private readonly categoryService: CategoryService) {}
+  constructor(
+    private readonly categoryService: CategoryService,
+    private readonly unsplashService: UnsplashService,
+  ) {}
 
   @Get()
   @ApiOperation({ summary: '타입과 가격에 따른 카테고리와 제품 조회' })
@@ -29,5 +33,29 @@ export class CategoryController {
     @Query('price', PriceValidationPipe) price: number,
   ): Promise<CategoryDto[]> {
     return await this.categoryService.findAllWithProductsByPrice(type, price);
+  }
+
+  @Get('image')
+  @ApiOperation({ summary: '이미지 검색' })
+  @ApiQuery({
+    name: 'keyword',
+    description: '검색어, 예) "cat", "dog", "car", "apple", "banana", "orange"',
+    required: true,
+  })
+  @ApiQuery({
+    name: 'page',
+    description: '페이지 번호 (한 페이지당 10개의 이미지), 1부터 시작',
+    required: true,
+  })
+  @ApiResponse({
+    status: 200,
+    description: '이미지가 성공적으로 조회되었습니다.',
+  })
+  async getUnsplashImage(
+    @Query('keyword') keyword: string,
+    @Query('page', ParseIntPipe) page: number,
+  ): Promise<UnsplashImageUrls[]> {
+    console.log('받는 쿼리 확인 : ', keyword);
+    return await this.unsplashService.getImages(keyword, page);
   }
 }
