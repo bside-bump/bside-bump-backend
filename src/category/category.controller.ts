@@ -1,9 +1,10 @@
 import { Controller, Get, ParseIntPipe, Query } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { UnsplashImageUrls, UnsplashService } from '@service/unsplash';
+import { UnsplashService } from '@service/unsplash';
 import { PriceValidationPipe } from '../common/pipes/price-validation.pipe';
 import { CategoryService } from './category.service';
 import { CategoryDto } from './dtos/category.dto';
+import { FindCategoryImagesDto } from './dtos/get-category-image.dto';
 
 @ApiTags('Category')
 @Controller('category')
@@ -51,11 +52,16 @@ export class CategoryController {
     status: 200,
     description: '이미지가 성공적으로 조회되었습니다.',
   })
-  async getUnsplashImage(
+  @ApiResponse({
+    status: 200,
+    description: '성공',
+    type: FindCategoryImagesDto,
+  })
+  async findCategoryImages(
     @Query('keyword') keyword: string,
     @Query('page', ParseIntPipe) page: number,
-  ): Promise<UnsplashImageUrls[]> {
+  ): Promise<FindCategoryImagesDto> {
     console.log('받는 쿼리 확인 : ', keyword);
-    return await this.unsplashService.getImages(keyword, page);
+    return { urls: await this.unsplashService.getImages(keyword, page) };
   }
 }
