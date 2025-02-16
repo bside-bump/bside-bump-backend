@@ -18,7 +18,7 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@service/*": ["src/service/*"]
+      "@service/*": ["src/common/service/*"]
     }
   }
 }
