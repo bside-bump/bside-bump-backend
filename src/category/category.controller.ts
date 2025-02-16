@@ -1,10 +1,26 @@
-import { Controller, Get, ParseIntPipe, Query } from '@nestjs/common';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Get,
+  ParseIntPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { UnsplashService } from '@service/unsplash';
 import { PriceValidationPipe } from '../common/pipes/price-validation.pipe';
 import { CategoryService } from './category.service';
 import { CategoryDto } from './dtos/category.dto';
+import { CreateProductBodyDto } from './dtos/create-product.dto';
 import { FindCategoryImagesDto } from './dtos/get-category-image.dto';
+import { ProductDto } from './dtos/product.dto';
+import { ProductService } from './product.service';
 
 @ApiTags('Category')
 @Controller('category')
@@ -12,6 +28,7 @@ export class CategoryController {
   constructor(
     private readonly categoryService: CategoryService,
     private readonly unsplashService: UnsplashService,
+    private readonly productService: ProductService,
   ) {}
 
   @Get()
@@ -63,5 +80,14 @@ export class CategoryController {
   ): Promise<FindCategoryImagesDto> {
     console.log('받는 쿼리 확인 : ', keyword);
     return { urls: await this.unsplashService.getImages(keyword, page) };
+  }
+
+  @Post('product')
+  @ApiOperation({ summary: '카테고리 제품 생성' })
+  @ApiBody({ type: CreateProductBodyDto })
+  @ApiResponse({ status: 200, description: '성공', type: ProductDto })
+  async create(@Body() body: CreateProductBodyDto): Promise<ProductDto> {
+    console.log('받는 내용 확인: ', body);
+    return await this.productService.create(body);
   }
 }
