@@ -8,6 +8,8 @@ import {
 } from '@nestjs/common';
 import {
   ApiBody,
+  ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiQuery,
   ApiResponse,
@@ -65,13 +67,8 @@ export class CategoryController {
     description: '페이지 번호 (한 페이지당 10개의 이미지), 1부터 시작',
     required: true,
   })
-  @ApiResponse({
-    status: 200,
+  @ApiOkResponse({
     description: '이미지가 성공적으로 조회되었습니다.',
-  })
-  @ApiResponse({
-    status: 200,
-    description: '성공',
     type: FindCategoryImagesDto,
   })
   async findCategoryImages(
@@ -85,6 +82,13 @@ export class CategoryController {
   @Post('product')
   @ApiOperation({ summary: '카테고리 제품 생성' })
   @ApiBody({ type: CreateProductBodyDto })
+  @ApiOkResponse({
+    description: '카테고리 품목이 성공적으로 생성되었습니다.',
+    type: ProductDto,
+  })
+  @ApiNotFoundResponse({
+    description: '카테고리가 존재하지 않습니다.',
+  })
   @ApiResponse({ status: 200, description: '성공', type: ProductDto })
   async create(@Body() body: CreateProductBodyDto): Promise<ProductDto> {
     console.log('받는 내용 확인: ', body);
