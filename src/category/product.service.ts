@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Category, Product } from 'src/common/entities';
+import { Category } from 'src/common/entities/category.entity';
+import { Product } from 'src/common/entities/product.entity';
 import { Repository } from 'typeorm';
 import { CreateProductBodyDto } from './dtos/create-product.dto';
 
