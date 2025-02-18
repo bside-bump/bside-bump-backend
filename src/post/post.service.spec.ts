@@ -1,10 +1,8 @@
-import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { RecommendationTypeEnum } from '../common/consts/types.const';
+import { MoreThan, Repository } from 'typeorm';
 import { Post } from '../common/entities/post.entity';
-import { PostDto } from './dtos/post.dto';
+import { CreatePostBodyDto, FindPostQuery } from './dtos/post.dto';
 import { PostService } from './post.service';
 
 describe('PostService', () => {
@@ -14,6 +12,8 @@ describe('PostService', () => {
   // 모의 리포지토리 정의
   const mockPostRepository = {
     find: jest.fn(),
+    findOne: jest.fn(),
+    create: jest.fn(),
     save: jest.fn(),
   };
 
@@ -40,118 +40,98 @@ describe('PostService', () => {
     expect(service).toBeDefined();
   });
 
-  // 전체 price 범위 테스트 (1,000원 이상 ~ 10,000,000원 미만 범위 초과 시 에러)
-  it('should throw an error if overall price is out of range', async () => {
-    const postDto: PostDto = {
-      name: '테스트',
-      price: 10000000, // 10,000,000 초과
-      type: RecommendationTypeEnum.MORE,
-      recommendedItems: [{ name: '추천1', price: 1000, iconUrl: 'icon-url' }],
-    };
+  describe('find', () => {
+    it('should return posts with sorting and limit', async () => {
+      const posts: Post[] = [
+        {
+          id: '1',
+          resultId: 'result1',
+          userId: 'user1',
+          description: '',
+          pollItems: [],
+          pollEndAt: new Date(),
+          polls: [],
+          createdAt: new Date(),
+        },
+      ];
+      const query: FindPostQuery = {
+        sort: 'createdAt',
+        order: 'desc',
+        limit: 50,
+      };
 
-    await expect(service.savePost(postDto)).rejects.toThrow(
-      BadRequestException,
-    );
+      mockPostRepository.find.mockResolvedValue(posts);
+
+      const result = await service.find(query);
+
+      expect(postRepository.find).toHaveBeenCalledWith({
+        order: { createdAt: 'desc' },
+        take: 50,
+      });
+      expect(result).toEqual(posts);
+    });
+
+    it('should handle status "progress" and add pollEndAt condition', async () => {
+      const posts: Post[] = [{ id: '1' } as Post];
+      const currentDate = new Date();
+      const query: FindPostQuery = {
+        sort: 'createdAt',
+        order: 'asc',
+        status: 'progress',
+      };
+
+      mockPostRepository.find.mockResolvedValue(posts);
+
+      const result = await service.find(query);
+
+      expect(postRepository.find).toHaveBeenCalled();
+      const findArgs = (postRepository.find as jest.Mock).mock.calls[0][0];
+      expect(findArgs.order).toEqual({ createdAt: 'ASC' });
+      expect(findArgs.take).toEqual(100);
+      expect(findArgs.where).toEqual({ pollEndAt: MoreThan(currentDate) });
+      expect(result).toEqual(posts);
+    });
   });
 
-  it('should throw an error if overall price is less than 1,000', async () => {
-    const postDto: PostDto = {
-      name: '테스트',
-      price: 999, // 1,000 미만
-      type: RecommendationTypeEnum.EXPENSIVE,
-      recommendedItems: [{ name: '추천1', price: 1000, iconUrl: 'icon-url' }],
-    };
+  describe('findById', () => {
+    it('should return a post by id', async () => {
+      const post: Post = { id: '123' } as Post;
+      mockPostRepository.findOne.mockResolvedValue(post);
 
-    await expect(service.savePost(postDto)).rejects.toThrow(
-      BadRequestException,
-    );
+      const result = await service.findById('123');
+
+      expect(postRepository.findOne).toHaveBeenCalledWith({
+        where: { id: '123' },
+        relations: ['polls'],
+      });
+      expect(result).toEqual(post);
+    });
   });
 
-  // 추천 품목의 개수 초과 테스트
-  it('should throw an error if recommended items exceed limit for MORE', async () => {
-    const postDto: PostDto = {
-      name: '테스트',
-      price: 50000,
-      type: RecommendationTypeEnum.MORE,
-      recommendedItems: [
-        { name: '추천1', price: 1000, iconUrl: 'icon-url' },
-        { name: '추천2', price: 2000, iconUrl: 'icon-url' },
-        { name: '추천3', price: 3000, iconUrl: 'icon-url' },
-        { name: '추천4', price: 4000, iconUrl: 'icon-url' }, // 4개, 최대 3개까지 가능
-      ],
-    };
+  describe('create', () => {
+    it('should create and save a new post', async () => {
+      const dto: CreatePostBodyDto = {
+        pollEndAt: new Date(Date.now() + 3600 * 1000),
+        resultId: 'result1',
+        userId: 'user1',
+        description: '',
+        pollItems: [],
+      };
+      const createdPost: Post = {
+        id: 'newId',
+        ...dto,
+        createdAt: new Date(),
+        polls: [],
+      };
 
-    await expect(service.savePost(postDto)).rejects.toThrow(
-      BadRequestException,
-    );
-  });
+      mockPostRepository.create.mockReturnValue(createdPost);
+      mockPostRepository.save.mockResolvedValue(createdPost);
 
-  // 추천 품목 가격이 더 큰 경우 (MORE)
-  it('should throw an error if recommended item price is greater than the main price for MORE', async () => {
-    const postDto: PostDto = {
-      name: '테스트',
-      price: 5000,
-      type: RecommendationTypeEnum.MORE,
-      recommendedItems: [
-        { name: '추천1', price: 6000, iconUrl: 'icon-url' }, // 가격이 더 큼
-      ],
-    };
+      const result = await service.create(dto);
 
-    await expect(service.savePost(postDto)).rejects.toThrow(
-      BadRequestException,
-    );
-  });
-
-  // 추천 품목 가격이 더 작은 경우 (EXPENSIVE)
-  it('should throw an error if recommended item price is lower than the main price for EXPENSIVE', async () => {
-    const postDto: PostDto = {
-      name: '테스트',
-      price: 5000,
-      type: RecommendationTypeEnum.EXPENSIVE,
-      recommendedItems: [
-        { name: '추천1', price: 4000, iconUrl: 'icon-url' }, // 가격이 더 작음
-      ],
-    };
-
-    await expect(service.savePost(postDto)).rejects.toThrow(
-      BadRequestException,
-    );
-  });
-
-  // MORE 타입에서 추천 품목 가격이 1원부터 999,999,999원 사이일 때 정상 동작 테스트
-  it('should allow recommended item price from 1 to 999,999,999 for MORE', async () => {
-    const postDto: PostDto = {
-      name: '테스트',
-      price: 50000,
-      type: RecommendationTypeEnum.MORE,
-      recommendedItems: [
-        { name: '추천1', price: 1, iconUrl: 'icon-url' },
-        { name: '추천2', price: 49999, iconUrl: 'icon-url' },
-      ],
-    };
-
-    mockPostRepository.save.mockResolvedValue(postDto);
-
-    const post = await service.savePost(postDto);
-
-    expect(post).toEqual(postDto);
-    expect(mockPostRepository.save).toHaveBeenCalledTimes(1);
-  });
-
-  // 조건을 모두 만족하는 경우 정상 저장 테스트
-  it('should save post when all conditions are met', async () => {
-    const postDto: PostDto = {
-      name: '테스트',
-      price: 10000,
-      type: RecommendationTypeEnum.MORE,
-      recommendedItems: [{ name: '추천1', price: 5000, iconUrl: 'icon-url' }],
-    };
-
-    mockPostRepository.save.mockResolvedValue(postDto);
-
-    const post = await service.savePost(postDto);
-
-    expect(post).toEqual(postDto);
-    expect(mockPostRepository.save).toHaveBeenCalledTimes(1);
+      expect(postRepository.create).toHaveBeenCalledWith(dto);
+      expect(postRepository.save).toHaveBeenCalledWith(createdPost);
+      expect(result).toEqual(createdPost);
+    });
   });
 });

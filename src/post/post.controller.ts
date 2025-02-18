@@ -27,12 +27,11 @@ export class PostController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'ID로 게시글 조회' })
+  @ApiOperation({ summary: '게시글 목록 조회' })
   @ApiOkResponse({
     description: '결과가 성공적으로 조회되었습니다.',
     type: PostDto,
   })
-  @ApiNotFoundResponse({ description: '결과를 찾을 수 없습니다.' })
   async findPosts(@Query() queries: FindPostQuery): Promise<PostDto[]> {
     console.log('받는 쿼리 확인 : ', JSON.stringify(queries));
     return await this.postService.find(queries);

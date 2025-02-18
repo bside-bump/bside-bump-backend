@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Poll } from 'src/common/entities/poll.entity';
 import { FindManyOptions, MoreThan, Repository } from 'typeorm';
+import { Poll } from '../common/entities/poll.entity';
 import { Post } from '../common/entities/post.entity';
 import { CreatePostBodyDto, FindPostQuery } from './dtos/post.dto';
 

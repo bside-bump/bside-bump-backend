@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { UnsplashService } from '@service/unsplash';
 import { CategoryController } from './category.controller';
 import { CategoryService } from './category.service';
 
@@ -26,6 +27,10 @@ describe('CategoryController', () => {
         {
           provide: CategoryService,
           useValue: mockCategoryService,
+        },
+        {
+          provide: UnsplashService,
+          useValue: {},
         },
       ],
     }).compile();
