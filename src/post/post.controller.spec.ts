@@ -1,7 +1,7 @@
+import { Post } from '@common/entities/post.entity';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Post } from '../common/entities/post.entity';
 import { PostController } from './post.controller';
 import { PostService } from './post.service';
 

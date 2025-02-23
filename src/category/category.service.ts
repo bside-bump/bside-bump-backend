@@ -1,7 +1,7 @@
+import { Category } from '@common/entities/category.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Category } from '../common/entities/category.entity';
 
 @Injectable()
 export class CategoryService {
@@ -25,7 +25,13 @@ export class CategoryService {
         },
       },
     });
-
+    if (price === -1) {
+      // 전체 가격에 대한 조회
+      return categories.map((category) => ({
+        ...category,
+        products: category.products,
+      }));
+    }
     // type 에 따라 필터링 로직 적용
     if (type === 'MORE') {
       return categories.map((category) => ({

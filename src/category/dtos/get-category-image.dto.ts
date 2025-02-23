@@ -1,5 +1,5 @@
+import { UnsplashImageUrls } from '@common/services/unsplash';
 import { ApiProperty } from '@nestjs/swagger';
-import { UnsplashImageUrls } from '@service/unsplash';
 import { Type } from 'class-transformer';
 import { IsArray, IsString } from 'class-validator';
 

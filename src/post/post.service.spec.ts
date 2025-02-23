@@ -1,7 +1,7 @@
+import { Post } from '@common/entities/post.entity';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { MoreThan, Repository } from 'typeorm';
-import { Post } from '../common/entities/post.entity';
 import { CreatePostBodyDto, FindPostQuery } from './dtos/post.dto';
 import { PostService } from './post.service';
 
@@ -86,7 +86,7 @@ describe('PostService', () => {
 
       expect(postRepository.find).toHaveBeenCalled();
       const findArgs = (postRepository.find as jest.Mock).mock.calls[0][0];
-      expect(findArgs.order).toEqual({ createdAt: 'ASC' });
+      expect(findArgs.order).toEqual({ createdAt: 'asc' });
       expect(findArgs.take).toEqual(100);
       expect(findArgs.where).toEqual({ pollEndAt: MoreThan(currentDate) });
       expect(result).toEqual(posts);

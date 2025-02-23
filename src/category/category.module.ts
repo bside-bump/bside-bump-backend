@@ -1,6 +1,6 @@
+import { UnsplashService } from '@common/services/unsplash';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UnsplashService } from '@service/unsplash';
 import { Category } from 'src/common/entities/category.entity';
 import { Product } from 'src/common/entities/product.entity';
 import { CategoryController } from './category.controller';

@@ -1,8 +1,7 @@
+import { Post } from '@common/entities/post.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, MoreThan, Repository } from 'typeorm';
-import { Poll } from '../common/entities/poll.entity';
-import { Post } from '../common/entities/post.entity';
 import { CreatePostBodyDto, FindPostQuery } from './dtos/post.dto';
 
 @Injectable()
@@ -10,8 +9,8 @@ export class PostService {
   constructor(
     @InjectRepository(Post)
     private readonly postRepository: Repository<Post>,
-    @InjectRepository(Poll)
-    private readonly pollRepository: Repository<Poll>,
+    // @InjectRepository(Poll)
+    // private readonly pollRepository: Repository<Poll>,
   ) {}
 
   async find(queries: FindPostQuery): Promise<Post[]> {
