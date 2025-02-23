@@ -1,28 +1,27 @@
+import { PriceValidationPipe } from '@common/pipes/price-validation.pipe';
+import { UnsplashService } from '@common/services/unsplash';
 import {
   Body,
   Controller,
   Get,
+  NotImplementedException,
   ParseIntPipe,
   Post,
   Query,
 } from '@nestjs/common';
 import {
   ApiBody,
-  ApiNotFoundResponse,
+  ApiNotImplementedResponse,
   ApiOkResponse,
   ApiOperation,
   ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { UnsplashService } from '@service/unsplash';
-import { PriceValidationPipe } from '../common/pipes/price-validation.pipe';
 import { CategoryService } from './category.service';
 import { CategoryDto } from './dtos/category.dto';
 import { CreateProductBodyDto } from './dtos/create-product.dto';
 import { FindCategoryImagesDto } from './dtos/get-category-image.dto';
-import { ProductDto } from './dtos/product.dto';
-import { ProductService } from './product.service';
 
 @ApiTags('Category')
 @Controller('category')
@@ -30,7 +29,7 @@ export class CategoryController {
   constructor(
     private readonly categoryService: CategoryService,
     private readonly unsplashService: UnsplashService,
-    private readonly productService: ProductService,
+    // private readonly productService: ProductService,
   ) {}
 
   @Get()
@@ -43,14 +42,15 @@ export class CategoryController {
   })
   @ApiQuery({
     name: 'price',
-    description: '구매를 망설이는 가격',
+    description:
+      '구매를 망설이는 가격 (1000 ~ 99999999), -1 인 경우 모든 품목이 리턴됩니다.',
     type: Number,
     required: false,
   })
   @ApiResponse({ status: 200, description: '성공', type: [CategoryDto] })
   async getCategoriesWithProducts(
     @Query('type') type: string,
-    @Query('price', PriceValidationPipe) price: number,
+    @Query('price', PriceValidationPipe) price: number = -1,
   ): Promise<CategoryDto[]> {
     return await this.categoryService.findAllWithProductsByPrice(type, price);
   }
@@ -80,18 +80,13 @@ export class CategoryController {
   }
 
   @Post('product')
-  @ApiOperation({ summary: '카테고리 제품 생성' })
+  @ApiOperation({ summary: '카테고리 제품 생성 (사용 X)' })
   @ApiBody({ type: CreateProductBodyDto })
-  @ApiOkResponse({
-    description: '카테고리 품목이 성공적으로 생성되었습니다.',
-    type: ProductDto,
+  @ApiNotImplementedResponse({
+    description: '사용하지 않는 api입니다.',
   })
-  @ApiNotFoundResponse({
-    description: '카테고리가 존재하지 않습니다.',
-  })
-  @ApiResponse({ status: 200, description: '성공', type: ProductDto })
-  async create(@Body() body: CreateProductBodyDto): Promise<ProductDto> {
+  async create(@Body() body: CreateProductBodyDto): Promise<void> {
     console.log('받는 내용 확인: ', body);
-    return await this.productService.create(body);
+    throw new NotImplementedException('사용하지 않는 api입니다.');
   }
 }

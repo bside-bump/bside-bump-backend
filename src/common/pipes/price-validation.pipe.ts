@@ -10,6 +10,9 @@ import {
 export class PriceValidationPipe implements PipeTransform {
   transform(value: any, metadata: ArgumentMetadata) {
     const price = parseInt(value, 10);
+    if (price < 0) {
+      return -1;
+    }
 
     if (isNaN(price)) {
       throw new BadRequestException('Price must be a number');

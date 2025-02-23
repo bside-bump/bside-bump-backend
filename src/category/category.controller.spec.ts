@@ -1,5 +1,5 @@
+import { UnsplashService } from '@common/services/unsplash';
 import { Test, TestingModule } from '@nestjs/testing';
-import { UnsplashService } from '@service/unsplash';
 import { CategoryController } from './category.controller';
 import { CategoryService } from './category.service';
 
@@ -20,6 +20,10 @@ describe('CategoryController', () => {
     ]),
   };
 
+  const mockUnsplashService = {
+    getImages: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CategoryController],
@@ -30,7 +34,7 @@ describe('CategoryController', () => {
         },
         {
           provide: UnsplashService,
-          useValue: {},
+          useValue: mockUnsplashService,
         },
       ],
     }).compile();
