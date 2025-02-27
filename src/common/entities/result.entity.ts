@@ -21,6 +21,9 @@ export class Result {
   @Column('json')
   suggestedItems: SuggestedItem[];
 
+  @Column({ type: 'uuid', nullable: true, default: null })
+  userId: string;
+
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 }

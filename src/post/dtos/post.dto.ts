@@ -1,3 +1,4 @@
+import { Poll } from '@common/entities';
 import { ApiProperty, OmitType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
@@ -8,11 +9,15 @@ import {
   IsString,
   IsUUID,
   Validate,
+  ValidateNested,
 } from 'class-validator';
-import { PollItems } from 'src/common/entities/post.entity';
+import {
+  PollItems,
+  PostPollOptionCounts,
+} from 'src/common/entities/post.entity';
 
 export class PollItemsDto implements PollItems {
-  @ApiProperty({ description: '투표 항목' })
+  @ApiProperty({ description: '투표 항목', example: '항목1' })
   @IsString()
   option: string;
 }
@@ -36,10 +41,15 @@ export class PostDto {
   @IsString()
   description: string;
 
-  @ApiProperty({ description: '투표 항목', type: [PollItemsDto] })
+  @ApiProperty({
+    description: '투표 항목',
+    type: [PollItemsDto],
+    required: false,
+  })
+  @IsOptional()
   @IsArray()
   @Type(() => PollItemsDto)
-  pollItems: PollItemsDto[];
+  pollItems: PollItemsDto[] | null;
 
   @ApiProperty({
     description: '투표 종료 시간',
@@ -105,4 +115,10 @@ export class FindPostQuery {
   @IsString()
   @IsOptional()
   limit?: number = 100;
+}
+
+export class FindPostsResponseDto extends Poll {
+  @ApiProperty({ description: '투표 항목 수', example: { 항목1: 1, 항목2: 2 } })
+  @ValidateNested()
+  optionCounts: PostPollOptionCounts;
 }
