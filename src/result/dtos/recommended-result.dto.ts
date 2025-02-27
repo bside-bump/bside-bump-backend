@@ -10,7 +10,14 @@ export class RecommendedItemDto {
   @IsNumber()
   price: number;
 
-  @ApiProperty({ description: '추천 품목 아이콘 URL' })
+  @ApiProperty({ description: '추천 품목 아이콘 URL', required: false })
   @IsString()
-  iconUrl: string = 'default_image.png';
+  iconUrl?: string = 'default_image.png';
+
+  @ApiProperty({
+    description: '추천 품목 직접 검색 이미지 URL',
+    required: false,
+  })
+  @IsString()
+  imageUrl?: string;
 }
