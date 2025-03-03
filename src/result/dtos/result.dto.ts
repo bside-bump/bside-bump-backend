@@ -1,4 +1,3 @@
-import { SuggestedItem } from '@common/entities';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
@@ -14,6 +13,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { RecommendationTypeEnum } from '../../common/consts/types.const';
+import { SuggestedItem } from '../../common/entities';
 import { RecommendedItemDto, SuggestedItemDto } from './recommended-result.dto';
 
 export class ResultDto {
