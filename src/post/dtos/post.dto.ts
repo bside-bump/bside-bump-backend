@@ -5,6 +5,7 @@ import {
   IsArray,
   IsDate,
   IsDateString,
+  IsObject,
   IsOptional,
   IsString,
   IsUUID,
@@ -15,6 +16,7 @@ import {
   PollItems,
   PostPollOptionCounts,
 } from 'src/common/entities/post.entity';
+import { ResultDetailDto } from 'src/result/dtos';
 
 export class PollItemsDto implements PollItems {
   @ApiProperty({ description: '투표 항목', example: '항목1' })
@@ -60,6 +62,17 @@ export class PostDto {
   @IsOptional()
   pollEndAt: Date | null;
 
+  @ApiProperty({ description: '결과 정보' })
+  @IsOptional()
+  @IsObject()
+  @Type(() => ResultDetailDto)
+  result?: ResultDetailDto;
+
+  @ApiProperty({ description: '투표 항목 수', example: { 항목1: 1, 항목2: 2 } })
+  @ValidateNested()
+  @IsOptional()
+  optionCounts?: Record<string, number>;
+
   @ApiProperty({ description: '생성 시간' })
   @IsDate()
   createdAt: Date;
@@ -67,7 +80,7 @@ export class PostDto {
   // @ApiProperty({ description: '투표 목록', type: [PollDto] })
   // @IsArray()
   // @Type(() => PollDto)
-  // polls: Poll[];
+  // polls: Poll[] = [];
 
   // @ApiProperty({ description: '댓글 목록' })
   // comments: Comment[];
