@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class RecommendedItemDto {
   @ApiProperty({ description: '추천 품목 이름' })
@@ -11,13 +11,15 @@ export class RecommendedItemDto {
   price: number;
 
   @ApiProperty({ description: '추천 품목 아이콘 URL', required: false })
+  @IsOptional()
   @IsString()
-  iconUrl?: string = 'default_image.png';
+  iconUrl?: string;
 
   @ApiProperty({
     description: '추천 품목 직접 검색 이미지 URL',
     required: false,
   })
+  @IsOptional()
   @IsString()
   imageUrl?: string;
 }
