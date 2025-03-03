@@ -28,7 +28,7 @@ export class Result {
   createdAt: Date;
 }
 
-interface SuggestedItem {
+export interface SuggestedItem {
   name: string;
   price: number;
   iconUrl: string | null;
