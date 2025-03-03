@@ -13,7 +13,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { RecommendationTypeEnum } from '../../common/consts/types.const';
-import { SuggestedItem } from '../../common/entities';
+import { SuggestedItem } from '../../common/entities/result.entity';
 import { RecommendedItemDto, SuggestedItemDto } from './recommended-result.dto';
 
 export class ResultDto {
