@@ -17,7 +17,7 @@ export class ResultController {
     type: Result,
   })
   @ApiResponse({ status: 404, description: '결과를 찾을 수 없습니다.' })
-  async getResultById(@Param('id') id: string) {
+  async getResultById(@Param('id') id: string): Promise<Result> {
     const result = await this.resultService.findById(id);
     return result;
   }

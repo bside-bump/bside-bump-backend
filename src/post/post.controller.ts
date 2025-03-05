@@ -1,11 +1,13 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import {
+  ApiBody,
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { CreatePostPollBodyDto, PollDto } from './dtos';
 import { CreatePostBodyDto, FindPostQuery, PostDto } from './dtos/post.dto';
 import { PostService } from './post.service';
 
@@ -14,13 +16,27 @@ import { PostService } from './post.service';
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
+  @Put(':id/poll')
+  @ApiOperation({ summary: '게시글 투표' })
+  @ApiOkResponse({
+    description: '결과가 성공적으로 처리되었습니다.',
+    type: PostDto,
+  })
+  @ApiNotFoundResponse({ description: '게시글을 찾을 수 없습니다.' })
+  async createPostPll(
+    @Param('id') id: string,
+    @Body() body: CreatePostPollBodyDto,
+  ): Promise<PollDto> {
+    return await this.postService.createPostPoll(id, body);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'ID로 게시글 조회' })
   @ApiOkResponse({
     description: '결과가 성공적으로 조회되었습니다.',
     type: PostDto,
   })
-  @ApiNotFoundResponse({ description: '결과를 찾을 수 없습니다.' })
+  @ApiNotFoundResponse({ description: '게시글을 찾을 수 없습니다.' })
   async getPostById(@Param('id') id: string): Promise<PostDto> {
     console.log('받는 데이터 확인 : ', id);
     return await this.postService.findById(id);
@@ -39,6 +55,7 @@ export class PostController {
 
   @Post()
   @ApiOperation({ summary: '게시글 생성' })
+  @ApiBody({ type: CreatePostBodyDto })
   @ApiCreatedResponse({
     description: '결과가 성공적으로 저장되었습니다.',
     type: PostDto,

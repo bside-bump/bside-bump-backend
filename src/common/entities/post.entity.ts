@@ -25,7 +25,7 @@ export class Post {
   @Column()
   description: string;
 
-  @Column('json')
+  @Column({ type: 'json', nullable: true })
   pollItems: PollItems[];
 
   @Column({ type: 'timestamp', nullable: true, default: null })
@@ -47,4 +47,8 @@ export class Post {
 
 export interface PollItems {
   option: string;
+}
+
+export interface PostPollOptionCounts {
+  [key: string]: number;
 }

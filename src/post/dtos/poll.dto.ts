@@ -22,3 +22,13 @@ export class PollDto {
   @IsDate()
   createdAt: Date;
 }
+
+export class CreatePostPollBodyDto {
+  @ApiProperty({ description: '유저 ID' })
+  @IsUUID()
+  userId: string;
+
+  @ApiProperty({ description: '투표 항목', example: '항목1 (참는다)' })
+  @IsString()
+  option: string;
+}
