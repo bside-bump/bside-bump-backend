@@ -1,11 +1,12 @@
+import { RecommendationTypeEnum } from '@common/consts/types.const';
+import { Result } from '@common/entities/result.entity';
+import { BadRequestException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ResultService } from './result.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Result } from '../common/entities/result.entity';
 import { Repository } from 'typeorm';
 import { ResultDto } from './dtos/result.dto';
-import { BadRequestException } from '@nestjs/common';
-import { RecommendationTypeEnum } from '../common/consts/types.const';
+import { ResultService } from './result.service';
 
 describe('ResultService', () => {
   let service: ResultService;
@@ -25,6 +26,7 @@ describe('ResultService', () => {
           provide: getRepositoryToken(Result),
           useValue: mockResultRepository,
         },
+        ConfigService,
       ],
     }).compile();
 

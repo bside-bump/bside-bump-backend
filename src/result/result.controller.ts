@@ -1,8 +1,8 @@
+import { Result } from '@common/entities/result.entity';
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ResultService } from './result.service';
 import { ResultDto } from './dtos/result.dto';
-import { Result } from '../common/entities/result.entity';
+import { ResultService } from './result.service';
 
 @ApiTags('Result')
 @Controller('result')

@@ -1,23 +1,23 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Result } from '../common/entities/result.entity';
-import { Between, Repository } from 'typeorm';
-import { ResultDto } from './dtos/result.dto';
+import { Result } from '@common/entities/result.entity';
+import { sendingMsgToDiscord } from '@common/utils/discord-sending.utils';
 import {
-  validateOverallPrice,
   validateItemPrice,
+  validateOverallPrice,
   validateRecommendedItemsLength,
   validateRecommendedItemsPrice,
-} from '../common/utils/validation.utils';
-import { sendingMsgToDiscord } from 'src/common/utils/discord-sending.utils';
+} from '@common/utils/validation.utils';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Between, Repository } from 'typeorm';
+import { ResultDto } from './dtos/result.dto';
 
 @Injectable()
 export class ResultService {
   constructor(
     @InjectRepository(Result)
     private readonly resultRepository: Repository<Result>,
-    private readonly configSerivce: ConfigService,
+    private readonly configService: ConfigService,
   ) {}
 
   // 주어진 ID로 결과 조회
@@ -116,7 +116,7 @@ export class ResultService {
     `;
 
         // Discord 메시지 전송
-        const hookUrl = this.configSerivce.get<string>('DISCORD_WEBHOOK_URL');
+        const hookUrl = this.configService.get<string>('DISCORD_WEBHOOK_URL');
         await sendingMsgToDiscord(hookUrl, message);
       } catch (error) {
         console.log('discord 전송 실패 : ', error);
