@@ -1,4 +1,4 @@
-import { Comment, Poll } from '@common/entities';
+import { Poll } from '@common/entities';
 import { ApiProperty, OmitType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
@@ -84,12 +84,12 @@ export class PostDto {
   @IsDate()
   createdAt: Date;
 
-  @ApiProperty({ description: '댓글 목록', type: [CommentDto] })
+  @ApiProperty({ description: '댓글 목록' })
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CommentDto)
-  comments?: Comment[];
+  comments?: CommentDto[];
 
   // @ApiProperty({ description: '투표 목록', type: [PollDto] })
   // @IsArray()
