@@ -84,7 +84,7 @@ export class PostDto {
   @IsDate()
   createdAt: Date;
 
-  @ApiProperty({ description: '댓글 목록' })
+  @ApiProperty({ description: '댓글 목록', type: [CommentDto] })
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
