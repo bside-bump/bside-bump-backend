@@ -52,7 +52,7 @@ export class PostController {
     type: PostDto,
   })
   @ApiNotFoundResponse({ description: '게시글을 찾을 수 없습니다.' })
-  async createPostPll(
+  async createPostPoll(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() body: CreatePostPollBodyDto,
   ): Promise<PollDto> {
