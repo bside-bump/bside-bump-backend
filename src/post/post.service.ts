@@ -80,9 +80,6 @@ export class PostService {
       console.log('commentCounts', commentCounts);
 
       commentCountsMap = commentCounts.reduce((acc, curr) => {
-        if (!acc[curr.postId]) {
-          acc[curr.postId] = {};
-        }
         acc[curr.postId] = parseInt(curr.count, 10);
         return acc;
       }, {});
@@ -119,12 +116,8 @@ export class PostService {
       acc[curr.option] = parseInt(curr.count, 10);
       return acc;
     }, {});
-    const commentCounts = await this.commentRepository.count({
-      where: { postId: id },
-    });
-    console.log('optionCounts, commentCounts', optionCounts, commentCounts);
 
-    return { ...post, result, optionCounts, commentCounts };
+    return { ...post, result, optionCounts };
   }
 
   async create(body: CreatePostBodyDto): Promise<Post> {
