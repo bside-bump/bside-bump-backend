@@ -1,9 +1,9 @@
-import { Poll, Result } from '@common/entities';
+import { Comment, Poll, Result } from '@common/entities';
 import { Post } from '@common/entities/post.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, In, MoreThanOrEqual, Repository } from 'typeorm';
-import { CreatePostPollBodyDto } from './dtos';
+import { CommentDto, CreateCommentDto, CreatePostPollBodyDto } from './dtos';
 import { CreatePostBodyDto, FindPostQuery, PostDto } from './dtos/post.dto';
 
 @Injectable()
@@ -15,6 +15,8 @@ export class PostService {
     private readonly pollRepository: Repository<Poll>,
     @InjectRepository(Result)
     private readonly resultRepository: Repository<Result>,
+    @InjectRepository(Comment)
+    private readonly commentRepository: Repository<Comment>,
   ) {}
 
   async find(queries: FindPostQuery): Promise<PostDto[]> {
@@ -35,6 +37,7 @@ export class PostService {
 
     let optionCountsMap = {};
     let resultsMap = {};
+    let commentCountsMap: {};
     if (posts.length > 0) {
       const postIds = posts.map((post) => post.id);
       const resultIds = posts.map((post) => post.resultId);
@@ -66,19 +69,34 @@ export class PostService {
         acc[curr.postId][curr.option] = parseInt(curr.count, 10);
         return acc;
       }, {});
+
+      const commentCounts = await this.commentRepository
+        .createQueryBuilder('comment')
+        .select('comment.postId', 'postId')
+        .addSelect('COUNT(comment.id)', 'count')
+        .where('comment.postId IN (:...postIds)', { postIds })
+        .groupBy('comment.postId')
+        .getRawMany();
+      console.log('commentCounts', commentCounts);
+
+      commentCountsMap = commentCounts.reduce((acc, curr) => {
+        acc[curr.postId] = parseInt(curr.count, 10);
+        return acc;
+      }, {});
     }
 
     return posts.map((post) => ({
       ...post,
       result: post.resultId ? resultsMap[post.resultId] : null,
       optionCounts: optionCountsMap[post.id] || {},
+      commentCounts: commentCountsMap[post.id] || 0,
     }));
   }
 
   async findById(id: string): Promise<PostDto> {
     const post = await this.postRepository.findOne({
       where: { id },
-      relations: ['polls'],
+      relations: ['polls', 'comments'],
     });
     const result = await this.resultRepository.findOne({
       where: { id: post.resultId },
@@ -98,7 +116,6 @@ export class PostService {
       acc[curr.option] = parseInt(curr.count, 10);
       return acc;
     }, {});
-    console.log('optionCounts', optionCounts);
 
     return { ...post, result, optionCounts };
   }
@@ -124,6 +141,25 @@ export class PostService {
       await manager.save(post);
 
       return poll;
+    });
+  }
+
+  async createComment(id: string, body: CreateCommentDto): Promise<CommentDto> {
+    const post = await this.postRepository.findOne({
+      where: { id },
+      relations: ['comments'],
+    });
+    if (!post) {
+      throw new NotFoundException('게시글을 찾을 수 없습니다.');
+    }
+    return this.postRepository.manager.transaction(async (manager) => {
+      const comment = this.commentRepository.create({ postId: id, ...body });
+      await manager.save(comment);
+
+      post.comments = [...post.comments, comment];
+      await manager.save(post);
+
+      return comment;
     });
   }
 }
