@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 // import { CommentLike } from './comment-like.entity';
-// import { Comment } from './comment.entity';
+import { Comment } from './comment.entity';
 import { Poll } from './poll.entity';
 
 @Entity()
@@ -38,8 +38,8 @@ export class Post {
   @OneToMany(() => Poll, (poll) => poll.post)
   polls: Poll[];
 
-  // @OneToMany(() => Comment, (comment) => comment.post)
-  // comments: Comment[];
+  @OneToMany(() => Comment, (comment) => comment.post)
+  comments: Comment[];
 
   // @OneToMany(() => CommentLike, (commentLike) => commentLike.post)
   // commentLikes: CommentLike[];
