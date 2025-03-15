@@ -84,20 +84,13 @@ export class PostDto {
   @IsDate()
   createdAt: Date;
 
+  // FIXME: 하위 호환을 유지, 이후 삭제 예정
   @ApiProperty({ description: '댓글 목록', type: [CommentDto] })
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CommentDto)
   comments?: CommentDto[];
-
-  // @ApiProperty({ description: '투표 목록', type: [PollDto] })
-  // @IsArray()
-  // @Type(() => PollDto)
-  // polls: Poll[] = [];
-
-  // @ApiProperty({ description: '댓글 좋아요 목록' })
-  // commentLikes: CommentLike[];
 }
 
 export class CreatePostBodyDto extends OmitType(PostDto, [

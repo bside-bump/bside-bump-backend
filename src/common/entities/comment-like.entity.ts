@@ -3,15 +3,14 @@ import {
   Entity,
   Index,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-// import { CommentLike } from './comment-like.entity';
-import { CommentLike } from './comment-like.entity';
+import { Comment } from './comment.entity';
 import { Post } from './post.entity';
 
 @Entity()
-export class Comment {
+@Index(['userId', 'commentId', 'postId'], { unique: true })
+export class CommentLike {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -21,17 +20,18 @@ export class Comment {
 
   @Index()
   @Column()
-  userId: string;
+  commentId: string;
 
+  @Index()
   @Column()
-  content: string;
+  userId: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-  @ManyToOne(() => Post, (post) => post.comments)
-  post: Post;
+  @ManyToOne(() => Comment, (comment) => comment.commentLikes)
+  comment: Comment;
 
-  @OneToMany(() => CommentLike, (commentLike) => commentLike.comment)
-  commentLikes: CommentLike[];
+  @ManyToOne(() => Post, (post) => post.commentLikes)
+  post: Post;
 }

@@ -1,5 +1,15 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
-import { IsDate, IsString, IsUUID } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsArray,
+  IsDate,
+  IsInt,
+  IsOptional,
+  IsString,
+  IsUUID,
+  ValidateNested,
+} from 'class-validator';
+import { CommentLikeDto } from './comment-like.dto';
 
 export class CommentDto {
   @ApiProperty({ description: '댓글 ID' })
@@ -23,6 +33,17 @@ export class CommentDto {
   @ApiProperty({ description: '생성 시간' })
   @IsDate()
   createdAt: Date;
+
+  @ApiProperty({ description: '댓글 좋아요 목록', type: [CommentLikeDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CommentLikeDto)
+  commentLikes?: CommentLikeDto[];
+
+  @ApiProperty({ description: '좋아요 수' })
+  @IsInt()
+  @IsOptional()
+  likeCount?: number;
 }
 
 export class CreateCommentDto extends PickType(CommentDto, [
