@@ -85,7 +85,7 @@ export class PostController {
   }
 
   @Get(':id/comment')
-  @ApiOperation({ summary: '댓글 `조회' })
+  @ApiOperation({ summary: '댓글 조회' })
   @ApiOkResponse({
     description: '댓글이 성공적으로 조회되었습니다.',
     type: CommentDto,

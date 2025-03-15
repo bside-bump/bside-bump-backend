@@ -41,7 +41,7 @@ export class PostService {
 
     let optionCountsMap = {};
     let resultsMap = {};
-    let commentCountsMap: Record<string, never>;
+    let commentCountsMap: Record<string, number>;
     if (posts.length > 0) {
       const postIds = posts.map((post) => post.id);
       const resultIds = posts.map((post) => post.resultId);
