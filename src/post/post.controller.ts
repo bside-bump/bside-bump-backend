@@ -18,10 +18,13 @@ import {
 } from '@nestjs/swagger';
 import {
   CommentDto,
+  CommentLikeDto,
   CreateCommentDto,
+  CreateCommentLikeBodyDto,
   CreatePostPollBodyDto,
   PollDto,
 } from './dtos';
+
 import { CreatePostBodyDto, FindPostQuery, PostDto } from './dtos/post.dto';
 import { PostService } from './post.service';
 
@@ -29,6 +32,23 @@ import { PostService } from './post.service';
 @Controller('post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
+
+  @Post(':id/comment-like')
+  @ApiOperation({ summary: '게시글 댓글 좋아요' })
+  @ApiCreatedResponse({
+    description: '댓글 좋아요가 성공적으로 처리되었습니다.',
+    type: CommentDto,
+  })
+  @ApiNotFoundResponse({
+    description: '게시글이나 댓글을 찾을 수 없습니다.',
+  })
+  async createCommentLike(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() body: CreateCommentLikeBodyDto,
+  ): Promise<CommentLikeDto> {
+    console.log('받는 데이터 확인 : ', id, JSON.stringify(body));
+    return await this.postService.createCommentLike(id, body);
+  }
 
   @Post(':id/comment')
   @ApiOperation({ summary: '게시글 댓글 생성' })
@@ -43,6 +63,20 @@ export class PostController {
   ): Promise<CommentDto> {
     console.log('받는 데이터 확인 : ', id, JSON.stringify(body));
     return await this.postService.createComment(id, body);
+  }
+
+  @Get(':id/comment')
+  @ApiOperation({ summary: '댓글 상세 조회' })
+  @ApiOkResponse({
+    description: '댓글이 성공적으로 조회되었습니다.',
+    type: CommentDto,
+  })
+  @ApiNotFoundResponse({ description: '게시글을 찾을 수 없습니다.' })
+  async findPostComments(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<CommentDto[]> {
+    console.log('받는 데이터 확인 : ', id);
+    return await this.postService.findPostComments(id);
   }
 
   @Put(':id/poll')

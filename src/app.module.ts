@@ -17,6 +17,7 @@ import {
   Result,
 } from './common/entities';
 
+import { CommentLike } from '@common/entities/comment-like.entity';
 import { PostModule } from './post/post.module';
 import { ResultModule } from './result/result.module';
 
@@ -61,7 +62,7 @@ import { ResultModule } from './result/result.module';
         username: configService.get('POSTGRES_USER'),
         password: configService.get('POSTGRES_PASSWORD'),
         database: configService.get('POSTGRES_DB'),
-        entities: [Category, Product, Result, Post, Poll, Comment],
+        entities: [Category, Product, Result, Post, Poll, Comment, CommentLike],
         synchronize: true,
       }),
     }),

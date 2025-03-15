@@ -18,7 +18,6 @@ import {
   PostPollOptionCounts,
 } from 'src/common/entities/post.entity';
 import { ResultDetailDto } from 'src/result/dtos';
-import { CommentDto } from './comment.dto';
 
 export class PollItemsDto implements PollItems {
   @ApiProperty({ description: '투표 항목', example: '항목1' })
@@ -83,21 +82,6 @@ export class PostDto {
   @ApiProperty({ description: '생성 시간' })
   @IsDate()
   createdAt: Date;
-
-  @ApiProperty({ description: '댓글 목록', type: [CommentDto] })
-  @IsOptional()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => CommentDto)
-  comments?: CommentDto[];
-
-  // @ApiProperty({ description: '투표 목록', type: [PollDto] })
-  // @IsArray()
-  // @Type(() => PollDto)
-  // polls: Poll[] = [];
-
-  // @ApiProperty({ description: '댓글 좋아요 목록' })
-  // commentLikes: CommentLike[];
 }
 
 export class CreatePostBodyDto extends OmitType(PostDto, [
