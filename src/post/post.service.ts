@@ -1,10 +1,16 @@
 import { Comment, Poll, Result } from '@common/entities';
 import { CommentLike } from '@common/entities/comment-like.entity';
+import { CommentReport } from '@common/entities/comment-report.entity';
 import { Post } from '@common/entities/post.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, In, MoreThanOrEqual, Repository } from 'typeorm';
-import { CommentDto, CreateCommentDto, CreatePostPollBodyDto } from './dtos';
+import {
+  CommentDto,
+  CreateCommentDto,
+  CreateCommentReportBodyDto,
+  CreatePostPollBodyDto,
+} from './dtos';
 import { CreateCommentLikeBodyDto } from './dtos/comment-like.dto';
 import { CreatePostBodyDto, FindPostQuery, PostDto } from './dtos/post.dto';
 
@@ -21,6 +27,8 @@ export class PostService {
     private readonly commentRepository: Repository<Comment>,
     @InjectRepository(CommentLike)
     private readonly commentLikeRepository: Repository<CommentLike>,
+    @InjectRepository(CommentReport)
+    private readonly commentReportRepository: Repository<CommentReport>,
   ) {}
 
   async find(queries: FindPostQuery): Promise<PostDto[]> {
@@ -100,7 +108,7 @@ export class PostService {
   async findById(id: string): Promise<PostDto> {
     const post = await this.postRepository.findOne({
       where: { id },
-      relations: ['polls'],
+      relations: ['polls', 'comments'],
     });
     const result = await this.resultRepository.findOne({
       where: { id: post.resultId },
@@ -146,34 +154,6 @@ export class PostService {
 
       return poll;
     });
-  }
-
-  async findPostComments(postId: string): Promise<CommentDto[]> {
-    const post = await this.postRepository.findOne({
-      where: { id: postId },
-    });
-    if (!post) {
-      throw new NotFoundException('게시글을 찾을 수 없습니다.');
-    }
-    const comment = await this.commentRepository.find({
-      where: { postId },
-      relations: ['commentLikes'],
-    });
-    const commentLikeCounts = await this.commentLikeRepository
-      .createQueryBuilder('commentLike')
-      .select('commentLike.commentId', 'commentId')
-      .addSelect('COUNT(commentLike.id)', 'count')
-      .where('commentLike.postId = :postId', { postId })
-      .groupBy('commentLike.commentId')
-      .getRawMany();
-    const commentLikeCountsMap = commentLikeCounts.reduce((acc, curr) => {
-      acc[curr.commentId] = parseInt(curr.count, 10);
-      return acc;
-    }, {});
-    return comment.map((comment) => ({
-      ...comment,
-      likeCount: commentLikeCountsMap[comment.id] || 0,
-    }));
   }
 
   async createComment(id: string, body: CreateCommentDto): Promise<CommentDto> {
@@ -226,5 +206,24 @@ export class PostService {
       throw new NotFoundException('댓글 좋아요를 찾을 수 없습니다.');
     }
     await this.commentLikeRepository.delete(commentLike.id);
+  }
+
+  async createCommentReport(
+    postId: string,
+    body: CreateCommentReportBodyDto,
+  ): Promise<CommentReport> {
+    const { commentId } = body;
+    const comment = await this.commentRepository.findOne({
+      where: { id: commentId, postId },
+    });
+    if (!comment) {
+      throw new NotFoundException('게시글이나 댓글을 찾을 수 없습니다.');
+    }
+    const commentReport = this.commentReportRepository.create({
+      postId,
+      commentId,
+      ...body,
+    });
+    return await this.commentReportRepository.save(commentReport);
   }
 }
