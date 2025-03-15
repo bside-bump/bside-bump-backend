@@ -7,18 +7,18 @@ import { extname } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CategoryModule } from './category/category.module';
+import { CommentModule } from './comment/comment.module';
 import { PUBLIC_FOLDER_PATH } from './common/consts/path.const';
 import {
   Category,
   Comment,
+  CommentLike,
+  CommentReport,
   Poll,
   Post,
   Product,
   Result,
 } from './common/entities';
-
-import { CommentLike } from '@common/entities/comment-like.entity';
-import { CommentReport } from '@common/entities/comment-report.entity';
 import { PostModule } from './post/post.module';
 import { ResultModule } from './result/result.module';
 
@@ -79,6 +79,7 @@ import { ResultModule } from './result/result.module';
     CategoryModule,
     ResultModule,
     PostModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

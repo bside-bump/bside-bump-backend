@@ -27,7 +27,6 @@ export class CommentReportDto {
 }
 
 export class CreateCommentReportBodyDto extends PickType(CommentReportDto, [
-  'commentId',
   'userId',
   'reason',
 ] as const) {}

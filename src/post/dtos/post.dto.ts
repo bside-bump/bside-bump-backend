@@ -1,3 +1,4 @@
+import { CommentDto } from '@app/comment/dtos';
 import { Poll } from '@common/entities';
 import { ApiProperty, OmitType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
@@ -18,7 +19,6 @@ import {
   PostPollOptionCounts,
 } from 'src/common/entities/post.entity';
 import { ResultDetailDto } from 'src/result/dtos';
-import { CommentDto } from './comment.dto';
 
 export class PollItemsDto implements PollItems {
   @ApiProperty({ description: '투표 항목', example: '항목1' })
