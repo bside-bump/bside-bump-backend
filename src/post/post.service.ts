@@ -108,7 +108,7 @@ export class PostService {
   async findById(id: string): Promise<PostDto> {
     const post = await this.postRepository.findOne({
       where: { id },
-      relations: ['polls', 'comments'],
+      relations: ['polls', 'comments', 'comments.commentLikes'],
     });
     const result = await this.resultRepository.findOne({
       where: { id: post.resultId },
