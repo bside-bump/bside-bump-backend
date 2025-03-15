@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseUUIDPipe,
@@ -33,7 +34,7 @@ import { PostService } from './post.service';
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
-  @Post(':id/comment-like')
+  @Post(':id/comment/:commentId/like')
   @ApiOperation({ summary: '게시글 댓글 좋아요' })
   @ApiCreatedResponse({
     description: '댓글 좋아요가 성공적으로 처리되었습니다.',
@@ -44,10 +45,28 @@ export class PostController {
   })
   async createCommentLike(
     @Param('id', ParseUUIDPipe) id: string,
+    @Param('commentId', ParseUUIDPipe) commentId: string,
     @Body() body: CreateCommentLikeBodyDto,
   ): Promise<CommentLikeDto> {
-    console.log('받는 데이터 확인 : ', id, JSON.stringify(body));
-    return await this.postService.createCommentLike(id, body);
+    console.log('받는 데이터 확인 : ', id, commentId, JSON.stringify(body));
+    return await this.postService.createCommentLike(id, commentId, body);
+  }
+
+  @Delete(':id/comment/:commentId/like')
+  @ApiOperation({ summary: '게시글 댓글 좋아요 취소' })
+  @ApiOkResponse({
+    description: '댓글 좋아요 취소가 성공적으로 처리되었습니다.',
+  })
+  @ApiNotFoundResponse({
+    description: '댓글 좋아요를 찾을 수 없습니다.',
+  })
+  async deleteCommentLike(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('commentId', ParseUUIDPipe) commentId: string,
+    @Query('userId', ParseUUIDPipe) userId: string,
+  ): Promise<void> {
+    console.log('받는 데이터 확인 : ', id, commentId, userId);
+    return await this.postService.deleteCommentLike(id, commentId, userId);
   }
 
   @Post(':id/comment')
@@ -66,7 +85,7 @@ export class PostController {
   }
 
   @Get(':id/comment')
-  @ApiOperation({ summary: '댓글 상세 조회' })
+  @ApiOperation({ summary: '댓글 `조회' })
   @ApiOkResponse({
     description: '댓글이 성공적으로 조회되었습니다.',
     type: CommentDto,

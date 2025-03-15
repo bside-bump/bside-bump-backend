@@ -194,11 +194,12 @@ export class PostService {
       return comment;
     });
   }
+
   async createCommentLike(
     id: string,
+    commentId: string,
     body: CreateCommentLikeBodyDto,
   ): Promise<CommentLike> {
-    const { commentId, userId } = body;
     const comment = await this.commentRepository.findOne({
       where: { id: commentId, postId: id },
     });
@@ -208,8 +209,22 @@ export class PostService {
     const commentLike = this.commentLikeRepository.create({
       commentId,
       postId: id,
-      userId,
+      ...body,
     });
     return await this.commentLikeRepository.save(commentLike);
+  }
+
+  async deleteCommentLike(
+    id: string,
+    commentId: string,
+    userId: string,
+  ): Promise<void> {
+    const commentLike = await this.commentLikeRepository.findOne({
+      where: { postId: id, commentId, userId },
+    });
+    if (!commentLike) {
+      throw new NotFoundException('댓글 좋아요를 찾을 수 없습니다.');
+    }
+    await this.commentLikeRepository.delete(commentLike.id);
   }
 }

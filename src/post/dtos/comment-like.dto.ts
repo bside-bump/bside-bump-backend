@@ -2,10 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsUUID } from 'class-validator';
 
 export class CreateCommentLikeBodyDto {
-  @ApiProperty({ description: '댓글 ID' })
-  @IsUUID()
-  commentId: string;
-
   @ApiProperty({ description: '유저 ID' })
   @IsUUID()
   userId: string;
