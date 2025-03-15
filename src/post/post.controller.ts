@@ -86,20 +86,6 @@ export class PostController {
     return await this.postService.createComment(id, body);
   }
 
-  @Get(':id/comment')
-  @ApiOperation({ summary: '댓글 조회' })
-  @ApiOkResponse({
-    description: '댓글이 성공적으로 조회되었습니다.',
-    type: CommentDto,
-  })
-  @ApiNotFoundResponse({ description: '게시글을 찾을 수 없습니다.' })
-  async findPostComments(
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<CommentDto[]> {
-    console.log('받는 데이터 확인 : ', id);
-    return await this.postService.findPostComments(id);
-  }
-
   @Put(':id/poll')
   @ApiOperation({ summary: '게시글 투표' })
   @ApiOkResponse({
@@ -118,7 +104,7 @@ export class PostController {
   @ApiOperation({ summary: '댓글 신고' })
   @ApiCreatedResponse({
     description: '댓글이 성공적으로 신고되었습니다.',
-    type: CommentDto,
+    type: CommentReportDto,
   })
   @ApiNotFoundResponse({ description: '게시글이나 댓글을 찾을 수 없습니다.' })
   async createCommentReport(

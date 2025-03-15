@@ -108,7 +108,7 @@ export class PostService {
   async findById(id: string): Promise<PostDto> {
     const post = await this.postRepository.findOne({
       where: { id },
-      relations: ['polls'],
+      relations: ['polls', 'comments'],
     });
     const result = await this.resultRepository.findOne({
       where: { id: post.resultId },
@@ -154,34 +154,6 @@ export class PostService {
 
       return poll;
     });
-  }
-
-  async findPostComments(postId: string): Promise<CommentDto[]> {
-    const post = await this.postRepository.findOne({
-      where: { id: postId },
-    });
-    if (!post) {
-      throw new NotFoundException('게시글을 찾을 수 없습니다.');
-    }
-    const comment = await this.commentRepository.find({
-      where: { postId },
-      relations: ['commentLikes'],
-    });
-    const commentLikeCounts = await this.commentLikeRepository
-      .createQueryBuilder('commentLike')
-      .select('commentLike.commentId', 'commentId')
-      .addSelect('COUNT(commentLike.id)', 'count')
-      .where('commentLike.postId = :postId', { postId })
-      .groupBy('commentLike.commentId')
-      .getRawMany();
-    const commentLikeCountsMap = commentLikeCounts.reduce((acc, curr) => {
-      acc[curr.commentId] = parseInt(curr.count, 10);
-      return acc;
-    }, {});
-    return comment.map((comment) => ({
-      ...comment,
-      likeCount: commentLikeCountsMap[comment.id] || 0,
-    }));
   }
 
   async createComment(id: string, body: CreateCommentDto): Promise<CommentDto> {

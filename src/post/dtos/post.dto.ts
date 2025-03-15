@@ -84,8 +84,11 @@ export class PostDto {
   @IsDate()
   createdAt: Date;
 
-  // FIXME: 하위 호환을 유지, 이후 삭제 예정
-  @ApiProperty({ description: '댓글 목록', type: [CommentDto] })
+  @ApiProperty({
+    description: '댓글 목록',
+    type: [CommentDto],
+    required: false,
+  })
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
