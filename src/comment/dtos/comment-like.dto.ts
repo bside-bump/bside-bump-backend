@@ -12,10 +12,6 @@ export class CommentLikeDto {
   @IsUUID()
   id: string;
 
-  @ApiProperty({ description: '게시글 ID' })
-  @IsUUID()
-  postId: string;
-
   @ApiProperty({ description: '댓글 ID' })
   @IsUUID()
   commentId: string;

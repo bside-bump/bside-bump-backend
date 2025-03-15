@@ -6,17 +6,12 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Comment } from './comment.entity';
-import { Post } from './post.entity';
 
 @Entity()
-@Index(['userId', 'commentId', 'postId'], { unique: true })
+@Index(['userId', 'commentId'], { unique: true })
 export class CommentLike {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Index()
-  @Column()
-  postId: string;
 
   @Index()
   @Column()
@@ -31,7 +26,4 @@ export class CommentLike {
 
   @ManyToOne(() => Comment, (comment) => comment.commentLikes)
   comment: Comment;
-
-  @ManyToOne(() => Post, (post) => post.commentLikes)
-  post: Post;
 }

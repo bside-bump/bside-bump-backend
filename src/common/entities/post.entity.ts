@@ -6,7 +6,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 // import { CommentLike } from './comment-like.entity';
-import { CommentLike } from './comment-like.entity';
 import { Comment } from './comment.entity';
 import { Poll } from './poll.entity';
 
@@ -41,9 +40,6 @@ export class Post {
 
   @OneToMany(() => Comment, (comment) => comment.post)
   comments: Comment[];
-
-  @OneToMany(() => CommentLike, (commentLike) => commentLike.post)
-  commentLikes: CommentLike[];
 }
 
 export interface PollItems {
