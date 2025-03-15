@@ -20,8 +20,10 @@ import {
 import {
   CommentDto,
   CommentLikeDto,
+  CommentReportDto,
   CreateCommentDto,
   CreateCommentLikeBodyDto,
+  CreateCommentReportBodyDto,
   CreatePostPollBodyDto,
   PollDto,
 } from './dtos';
@@ -110,6 +112,21 @@ export class PostController {
     @Body() body: CreatePostPollBodyDto,
   ): Promise<PollDto> {
     return await this.postService.createPostPoll(id, body);
+  }
+
+  @Post(':id/comment-report')
+  @ApiOperation({ summary: '댓글 신고' })
+  @ApiCreatedResponse({
+    description: '댓글이 성공적으로 신고되었습니다.',
+    type: CommentDto,
+  })
+  @ApiNotFoundResponse({ description: '게시글이나 댓글을 찾을 수 없습니다.' })
+  async createCommentReport(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() body: CreateCommentReportBodyDto,
+  ): Promise<CommentReportDto> {
+    console.log('받는 데이터 확인 : ', id);
+    return await this.postService.createCommentReport(id, body);
   }
 
   @Get(':id')
