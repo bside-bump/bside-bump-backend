@@ -6,7 +6,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-// import { CommentLike } from './comment-like.entity';
 import { CommentLike } from './comment-like.entity';
 import { Post } from './post.entity';
 
