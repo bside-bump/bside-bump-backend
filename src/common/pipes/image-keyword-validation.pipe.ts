@@ -11,7 +11,7 @@ export class ImageKeywordValidationPipe implements PipeTransform {
   transform(value: any, metadata: ArgumentMetadata) {
     const keyword = value.toString();
     if (keyword.length < 1) {
-      throw new BadRequestException('Keyword must be longer than 1 characters');
+      throw new BadRequestException('Keyword must be longer than 1 character');
     }
 
     if (keyword.length > 100) {
