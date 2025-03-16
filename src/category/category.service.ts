@@ -1,4 +1,5 @@
 import { Category } from '@common/entities/category.entity';
+import { UnsplashService } from '@common/services/unsplash';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -8,6 +9,7 @@ export class CategoryService {
   constructor(
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
+    private readonly unsplashService: UnsplashService,
   ) {}
 
   // 카테고리와 그에 솏한 제품들을 모두 가져오는 메서드
@@ -46,5 +48,9 @@ export class CategoryService {
     }
 
     return categories;
+  }
+
+  async findCategoryImages(keyword: string, page: number) {
+    return await this.unsplashService.getImages(keyword, page);
   }
 }
