@@ -1,5 +1,5 @@
+import { ImageKeywordValidationPipe } from '@common/pipes/image-keyword-validation.pipe';
 import { PriceValidationPipe } from '@common/pipes/price-validation.pipe';
-import { UnsplashService } from '@common/services/unsplash';
 import {
   Body,
   Controller,
@@ -28,7 +28,6 @@ import { FindCategoryImagesDto } from './dtos/get-category-image.dto';
 export class CategoryController {
   constructor(
     private readonly categoryService: CategoryService,
-    private readonly unsplashService: UnsplashService,
     // private readonly productService: ProductService,
   ) {}
 
@@ -59,7 +58,7 @@ export class CategoryController {
   @ApiOperation({ summary: '이미지 검색' })
   @ApiQuery({
     name: 'keyword',
-    description: '검색어, 예) "cat", "dog", "car", "apple", "banana", "orange"',
+    description: '검색어, 예) "cat", "dog", "고양이", "강아지"',
     required: true,
   })
   @ApiQuery({
@@ -72,11 +71,13 @@ export class CategoryController {
     type: FindCategoryImagesDto,
   })
   async findCategoryImages(
-    @Query('keyword') keyword: string,
+    @Query('keyword', ImageKeywordValidationPipe) keyword: string,
     @Query('page', ParseIntPipe) page: number,
   ): Promise<FindCategoryImagesDto> {
     console.log('받는 쿼리 확인 : ', keyword);
-    return { urls: await this.unsplashService.getImages(keyword, page) };
+    return {
+      urls: await this.categoryService.findCategoryImages(keyword, page),
+    };
   }
 
   @Post('product')
