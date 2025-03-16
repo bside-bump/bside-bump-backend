@@ -126,6 +126,33 @@ export class PostService {
     return await this.postRepository.save(post);
   }
 
+  async delete(id: string): Promise<number> {
+    const post = await this.postRepository.findOne({ where: { id } });
+    if (!post) {
+      throw new NotFoundException('게시글을 찾을 수 없습니다.');
+    }
+
+    const queryRunner =
+      this.postRepository.manager.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await queryRunner.manager.delete(Poll, { postId: id });
+      await queryRunner.manager.delete(Comment, { postId: id });
+      await queryRunner.manager.delete(Post, { id });
+
+      await queryRunner.commitTransaction();
+      return 1;
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      console.error(err);
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
   async createPostPoll(id: string, body: CreatePostPollBodyDto): Promise<Poll> {
     const post = await this.postRepository.findOne({
       where: { id },
