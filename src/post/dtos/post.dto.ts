@@ -99,6 +99,11 @@ export class PostDto {
 export class CreatePostBodyDto extends OmitType(PostDto, [
   'id',
   'createdAt',
+  'result',
+  'optionCounts',
+  'commentCounts',
+  'comments',
+  'createdAt',
 ] as const) {}
 
 export class FindPostQuery {

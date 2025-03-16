@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseUUIDPipe,
@@ -89,5 +90,17 @@ export class PostController {
   async createPost(@Body() body: CreatePostBodyDto): Promise<PostDto> {
     console.log('받는 데이터 확인 : ', JSON.stringify(body));
     return await this.postService.create(body);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: '게시글 삭제' })
+  @ApiOkResponse({
+    description: '게시글이 성공적으로 삭제되었습니다.',
+    type: Number,
+  })
+  @ApiNotFoundResponse({ description: '게시글을 찾을 수 없습니다.' })
+  async deletePost(@Param('id') id: string): Promise<number> {
+    console.log('받는 데이터 확인 : ', id);
+    return await this.postService.delete(id);
   }
 }
